@@ -72,7 +72,7 @@ select{
     position: relative;
     margin-bottom: 20px;
 }
-.idQuestion{
+.countQuestion{
     position: absolute;
     top: 0px;
     border-right: 1px solid black;
