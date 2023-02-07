@@ -1,7 +1,10 @@
-import { createElement } from "../utils/dom.js";
+import { urlQuestion }   from "../configs/url.js";
+import { fetchApi }      from "../utils/api.js";
 import { QuestionItems } from "./QuestionItems.js";
 
 export class Question {
+    /**@type {BigInteger} */
+    #counterOfQuestion;
 
     /**@type {Array} */
     #arrayOfQuestion = [];
@@ -23,92 +26,61 @@ export class Question {
      */
     appendTo (element) {
         this.#element = element;
+        document.querySelectorAll('.delete')
+        .forEach(
+            button => button.addEventListener(
+                'click', e => {
+                    this.#counterOfQuestion--;
+                    this.updateView();
+                }
+            )
+        );
         this.updateView();
+       
     }
 
     updateView () {
-        // this.#element.remove();
-        let counter = 0;
+        this.#counterOfQuestion = 1;
+        this.#element.innerHTML = "";
         for (let question of this.#arrayOfQuestion) {
-            const q = new QuestionItems(question);
-    
-            const countQuestion = createElement('span', {
-            class: 'countQuestion'
-            },counter++);
-            this.#element.append(
-                q.getElement()
-                 .append(countQuestion)
+            const q = new QuestionItems(
+                question, this.#counterOfQuestion++, this.#element
             );
+            this.#element.append(q.getElement());
         }
+
     }
 
     /**
      * 
      * @param {Object} question 
      */
-    addQuestion (question) {
-
-        if (question.answerInput == null || question.questionInput == "") 
+    async addQuestion (question) {
+        if (question.content == null || question.true == "") 
             return;
+
+        const newQuestion = await fetchApi(urlQuestion,{
+            method:'POST',
+            headers: {
+                'Content-Type': 'Application/json'
+            },
+            body: JSON.stringify({
+                content: question.content,
+                true   : question.true == 'true' 
+                            ? true
+                            : false
+            }),
+        });
+
+        question = newQuestion;
+   
         this.#arrayOfQuestion.push(question);
 
-        const q = new QuestionItems(question);
-        
-        const countQuestion = createElement('span', {
-        class: 'countQuestion'
-        },this.#arrayOfQuestion.length);
-
-        const elementOfq = q.getElement();
-       
-        elementOfq.append(countQuestion);
-
-        this.#element.append(elementOfq);
-
-        elementOfq.querySelector('.delete')
-            .addEventListener('click', e => this.#deleted(e)
+        const q = new QuestionItems(
+            question, this.#counterOfQuestion++, this.#element
         );
-
-        for (let i = 0 ; i < this.#arrayOfQuestion.length - 1 ; i++) {
-            console.log( "index of me " + this.#arrayOfQuestion.indexOf(this.#arrayOfQuestion[i]) + "  "  +this.#arrayOfQuestion[i]);
-        }
-    }
-
-    /**
-     * 
-     * @param {PointerEvent} e 
-     */
-    #deleted (e) {
-        console.log(':!: knt deleta');
-        const target = e.currentTarget;
-        const parentElementOfTarget = target.parentElement;
-        const answerOfQuestion = parentElementOfTarget
-            .classList
-            .item(
-                parentElementOfTarget
-                .classList
-                .length-1
-            );
-
-        let questionContent;
-        for (const child of parentElementOfTarget.children) {
-            if (child.classList.contains('content')) {
-                questionContent = child.textContent;
-            }
-        }
-
-        let questionDeleted = {
-            answerInput: answerOfQuestion,
-            questionInput: questionContent
-        }
-
-        this.#arrayOfQuestion.forEach(abc => {
-            if(JSON.stringify(abc) == JSON.stringify(questionDeleted)) {
-                console.log(abc);
-                console.log(this.#arrayOfQuestion.indexOf(abc))
-                let position=this.#arrayOfQuestion.indexOf(abc)
-                this.#arrayOfQuestion.splice(position,1);
-            }
-        })
+        this.#element.append(q.getElement());
+        
     }
 
     /**
@@ -118,4 +90,6 @@ export class Question {
     length () {
         return this.#arrayOfQuestion.length;
     }
+
+
 }

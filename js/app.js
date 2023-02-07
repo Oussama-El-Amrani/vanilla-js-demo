@@ -1,5 +1,7 @@
-import {form} from './components/form.js';
-import { Question } from './components/question.js';
+import { form }          from './components/form.js';
+import { Question }      from './components/question.js';
+import { urlQuestion }   from './configs/url.js';
+import { fetchApi }      from './utils/api.js';
 import { createElement } from './utils/dom.js';
 
 const main = document.querySelector('main');
@@ -10,34 +12,49 @@ const contenaireForm = createElement('article', {
 
 main.append(contenaireForm);
 
-contenaireForm.append(createElement('h2', {}, 'New Question:'));
+contenaireForm.append(
+    createElement('h2', {}, 'New Question:')
+);
 
 form.appendTo(contenaireForm);
-
-console.log(contenaireForm.querySelector('.submit'));
 
 //questions
 const contenaireQuestion = createElement('article', {
     id:'questions-contenaire'
 });
-
 main.append(contenaireQuestion);
+try {
+    const questionsFromApi = await fetchApi(urlQuestion);
+    const question = new Question(questionsFromApi);
 
-const question = new Question();
+    contenaireQuestion.append(
+        createElement('h2', {
+            class: 'question-counter'
+        }, `Questions (0)`)
+    );
 
-contenaireQuestion.append(createElement('h2', {}, `Questions (0)`));
+    contenaireQuestion.append(
+        createElement('div', {
+            id: 'questions',
+            class: 'questions'
+        })
+    );
 
-contenaireQuestion.append(createElement('div', {
-    id: 'questions',
-    class: 'questions'
-}));
+    question.appendTo(
+        contenaireQuestion.querySelector('.questions')
+    );
 
-question.appendTo(contenaireQuestion.querySelector('.questions'));
-contenaireForm.querySelector('.submit')
-    .addEventListener('click', e=>{
-        question.addQuestion(form.getInputWithValue());
+    contenaireForm.querySelector('.submit')
+        .addEventListener(
+            'click', e=> 
+                question.addQuestion(form.getInputWithValue())
+        );
+    }
+catch (e) {
+    const alertElement = createElement('div', {
+        class: 'alert',
     });
-
-
-
-
+    alertElement.innerText = 'Impossible de charger les éléments';
+    main.prepend(alertElement);
+    console.error(e);
+}

@@ -89,7 +89,7 @@ export class Form {
             if (child.value != null) {
                 child.value = null;
             }
-            if (child.id == 'answerInput')
+            if (child.id == 'true')
                 child.value = false;
         }
     }

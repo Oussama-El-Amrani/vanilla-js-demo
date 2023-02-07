@@ -7,16 +7,16 @@ export const form = new Form('div', {
 
 
 form.addFormItems(createElement('input', {
-    id: 'questionInput',
+    id: 'content',
     placeholder: 'question'
 }));
 
 const answerInput = createElement('select', {
-    id: 'answerInput'
+    id: 'true'
 });
 
 answerInput.append(createElement('option', {
-    value: 'true'
+    value: true
 }, 'true'));
 
 answerInput.append(createElement('option', {
