@@ -1,6 +1,7 @@
 import { urlQuestion }   from "../configs/url.js";
 import { fetchApi }      from "../utils/api.js";
 import { createElement } from "../utils/dom.js";
+import { Question }      from "./question.js";
 
 export class QuestionItems {
     /**@type {Object} */
@@ -54,6 +55,9 @@ export class QuestionItems {
         this.#element.append(content);
         this.#element.append(deleteButton);
         this.#element.append(switchButton);
+        document.querySelector('.question-counter')
+        .innerText = 
+        `Question (${Question.counterOfQuestion})`;
     }
 
     /**
@@ -110,5 +114,9 @@ export class QuestionItems {
         });
       
         this.#parentElement.removeChild(this.#element);
+        Question.counterOfQuestion--;
+        document.querySelector('.question-counter')
+            .innerText = 
+            `Question (${Question.counterOfQuestion})`;
     }
 }

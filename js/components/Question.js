@@ -3,10 +3,10 @@ import { fetchApi }      from "../utils/api.js";
 import { QuestionItems } from "./QuestionItems.js";
 
 export class Question {
-    /**@type {BigInteger} */
-    #counterOfQuestion;
+    /**@type {number} */
+    static counterOfQuestion;
 
-    /**@type {Array} */
+    /**@type {Array[{_id, content, true}]} */
     #arrayOfQuestion = [];
 
     /**@type {HTMLElement} */
@@ -30,7 +30,7 @@ export class Question {
         .forEach(
             button => button.addEventListener(
                 'click', e => {
-                    this.#counterOfQuestion--;
+                    Question.counterOfQuestion--
                     this.updateView();
                 }
             )
@@ -40,15 +40,14 @@ export class Question {
     }
 
     updateView () {
-        this.#counterOfQuestion = 1;
+        Question.counterOfQuestion = 1;
         this.#element.innerHTML = "";
         for (let question of this.#arrayOfQuestion) {
             const q = new QuestionItems(
-                question, this.#counterOfQuestion++, this.#element
+                question, Question.counterOfQuestion++, this.#element
             );
             this.#element.append(q.getElement());
         }
-
     }
 
     /**
@@ -77,7 +76,7 @@ export class Question {
         this.#arrayOfQuestion.push(question);
 
         const q = new QuestionItems(
-            question, this.#counterOfQuestion++, this.#element
+            question, Question.counterOfQuestion++, this.#element
         );
         this.#element.append(q.getElement());
         
@@ -85,7 +84,7 @@ export class Question {
 
     /**
      * 
-     * @return {Int32Array}
+     * @return {number}
      */
     length () {
         return this.#arrayOfQuestion.length;
