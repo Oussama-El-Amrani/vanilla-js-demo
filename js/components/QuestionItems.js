@@ -57,7 +57,7 @@ export class QuestionItems {
         this.#element.append(switchButton);
         document.querySelector('.question-counter')
         .innerText = 
-        `Question (${Question.counterOfQuestion})`;
+        `Questions (${Question.counterOfQuestion})`;
     }
 
     /**
@@ -117,6 +117,6 @@ export class QuestionItems {
         Question.counterOfQuestion--;
         document.querySelector('.question-counter')
             .innerText = 
-            `Question (${Question.counterOfQuestion})`;
+            `Questions (${Question.counterOfQuestion})`;
     }
 }
